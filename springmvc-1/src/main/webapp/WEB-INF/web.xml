@@ -1,12 +1,38 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://xmlns.jcp.org/xml/ns/javaee" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd" id="WebApp_ID" version="4.0">
-  <display-name>springmvc-1</display-name>
-  <welcome-file-list>
-    <welcome-file>index.html</welcome-file>
-    <welcome-file>index.htm</welcome-file>
-    <welcome-file>index.jsp</welcome-file>
-    <welcome-file>default.html</welcome-file>
-    <welcome-file>default.htm</welcome-file>
-    <welcome-file>default.jsp</welcome-file>
-  </welcome-file-list>
+  	
+  	<!-- 配置org.springframework.web.filter.HiddenHttpMethodFilter可将POST请求转化为PUT、DELETE请求-->
+  	<filter>
+  		<filter-name>HiddenHttpMethodFilter</filter-name>
+  		<filter-class>org.springframework.web.filter.HiddenHttpMethodFilter</filter-class>
+  	</filter>
+  	
+  	<filter-mapping> 
+  		<filter-name>HiddenHttpMethodFilter</filter-name>
+  		<url-pattern>/*</url-pattern>
+  	</filter-mapping>
+  	
+  	
+	<!-- 配置DispatcherServlet -->
+	<servlet>
+		<servlet-name>dispatcherServlet</servlet-name>
+		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+		<!-- 配置DispatcherServlet的初始化参数：SpringMVC配置文件的位置和名称  -->
+		<!-- 
+			实际上也可以不通过contextConfigLocation来配置SpringMVC配置文件的名称和位置，而使用默认的 
+			默认的配置文件为/WEB-INF/<servlet-name>-servlet.xml
+			<init-param>
+				<param-name>contextConfigLocation</param-name>
+				<param-value>classpath:springmvc.xml</param-value>
+			</init-param>
+		-->
+		<!-- 当前servlet在web应用被加载时就创建而不是等第一次请求时被创建 -->
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	
+	<!-- 可以应答所有请求 -->		
+	<servlet-mapping>
+		<servlet-name>dispatcherServlet</servlet-name>
+		<url-pattern>/</url-pattern>
+	</servlet-mapping>
 </web-app>
