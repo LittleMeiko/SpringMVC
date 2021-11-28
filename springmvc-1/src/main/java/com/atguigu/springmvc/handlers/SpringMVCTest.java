@@ -1,9 +1,27 @@
 package com.atguigu.springmvc.handlers;
 
+import java.io.IOException;
+import java.io.Writer;
+import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.SessionAttributes;
+import org.springframework.web.servlet.ModelAndView;
+
+import com.atguigu.springmvc.entities.Address;
+import com.atguigu.springmvc.entities.User;
 
 /**
  * 标准的HTTP请求头包含如下部分：
@@ -48,11 +66,119 @@ import org.springframework.web.bind.annotation.RequestMethod;
  * @author Meiko
  *
  */
+
+/**
+ * 处理模型数据输出的方式三：将模型中的某个属性暂存到HttpSession中，以便多个请求之间可以共享这个属性
+ * 此注解只能放在类的上面，而不能放到方法的上面
+ */
+@SessionAttributes(value = {"user"}, types = {Address.class})
 @RequestMapping("/springmvc")
 @Controller
 public class SpringMVCTest {
 	
 	private static final String SUCCESS = "success";
+	
+	@RequestMapping(value = "/testSessionAttributes")
+	public String testSessionAttributes (Map<String, Object> map) {
+		User user = new User("Tom", "123456", "tome@atugui.com", 15);
+		map.put("user", user);
+		Address address = new Address("GuangDong", "ShenZhen");
+		map.put("address", address);
+		return SUCCESS;
+	}
+	
+	
+	/**
+	 * 处理模型数据输出的方式二：目标方法的入参可以为Model、ModelMap、java.util.Map
+	 * 
+	 * @param map
+	 * @return
+	 */
+	@RequestMapping(value = "/testMap")
+	public String testMap(Map<String, List<String>> map) {
+		map.put("names", Arrays.asList("Tom", "Jerry", "Meiko"));	
+		return SUCCESS;
+	}
+	
+	/**
+	 * 处理模型数据输出的方式一：处理方法返回值类型为ModelAndView时，方法体即可通过该对象添加模型数据
+	 * 其中可以包含视图和模型数据
+	 * 
+	 * SpringMVC会把ModelAndView的model中的数据放到request的域对象中
+	 * 
+	 */
+	@RequestMapping(value = "/testModelAndView")
+	public ModelAndView testModelAndView() {
+		String viewName = SUCCESS;
+		ModelAndView modelAndView = new ModelAndView(viewName);
+		modelAndView.addObject("time", LocalDateTime.now());
+		return modelAndView;
+	}
+	
+	/**
+	 * 可以使用Servlet原生的API作为目标方法的入参，主要支持以下类型： 
+	 * HttpSerlvletRequest 
+	 * HttpSerlvletResponse
+	 * HttpSession 
+	 * java.security.Principal 
+	 * Locale 
+	 * InputStream 
+	 * OutputStream 
+	 * Reader
+	 * Writer
+	 * @throws IOException 
+	 */
+	@RequestMapping(value = "/testServletAPI")
+	public void testServletAPI(HttpServletRequest request, 
+			HttpServletResponse response, Writer writer) throws IOException {
+		System.out.println("request:" + request);
+		System.out.println("response:" + response);
+		writer.write("hello springmvc");
+	}
+	
+	/**
+	 * SpringMVC会按请求参数名和POJO属性名进行自动匹配
+	 * 自动为该对象填充属性值，且支持级联属性赋值
+	 */
+	@RequestMapping(value = "/testPojo")
+	public String testPojo(User user) {
+		System.out.println("user:" + user);
+		return SUCCESS;
+	}
+	
+	/**
+	 * @CookieValue：映射一个Cookie值
+	 */
+	@RequestMapping(value = "testCookieValue")
+	public String testCookieValue(@CookieValue(value = "JSESSIONID") String sessionId) {
+		System.out.println("testCookieValue:sessionId = " + sessionId);
+		return SUCCESS;
+	}
+	
+	
+	/**
+	 * @RequestHeader:映射请求头信息
+	 */
+	@RequestMapping(value = "/testRequestHeander")
+	public String testRequestHeander(@RequestHeader(value = "accept-language") String al) {
+		System.out.println("accept-language:" + al);
+		return SUCCESS;
+	}
+	
+	
+	/**
+	 * @RequestParam 用于映射请求参
+	 * 	value--请求参数名称
+	 *  required--请求参数是否为必须，默认值为true
+	 *  defaultValue--请求参数的默认值
+	 * 
+	 */
+	@RequestMapping(value = "/testRequestParam")
+	public String testRequestParam(@RequestParam(value = "username") String userName,
+			@RequestParam(value = "age", required = false, defaultValue = "0") int age) {
+		System.out.println("testRequestParam: userName=" + userName + ", age = " + age);
+		return SUCCESS;
+	}
 	
 	// DELETE 和 PUT 是不支持转发的，只支持重定向，所以发送put和delete请求时浏览器会报405错误
 	@RequestMapping(value = "/testRestPut/{id}", method = RequestMethod.PUT)

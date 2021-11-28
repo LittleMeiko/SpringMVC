@@ -1,0 +1,21 @@
+1.请求处理方法签名
+  (1)@PathVariable
+  (2)@RequestParam：绑定请求参数值
+  (3)@RequestHeader：将请求头中的属性值绑定到请求方法的入参中
+  (4)@CookieValue：绑定请求中的Cookie值
+  (5)使用JavaBean绑定请求参数值
+  (6)使用ServletAPI作为入参:
+  	 HttpSerlvletRequest
+  	 HttpSerlvletResponse
+  	 HttpSession
+  	 java.security.Principal
+  	 Locale
+  	 InputStream
+  	 OutputStream
+  	 Reader
+  	 Writer
+2.处理模型数据：
+  (1)ModelAndView:处理方法返回值类型为ModelAndView时，方法体即可通过该对象添加模型数据
+  (2)Map及Model:入参为Model、ModelMap、java.util.Map时，处理方法返回时会自动将Map中的数据添加到模型中
+  (3)SessionAttributes:将模型中的某个属性暂存到HttpSession中，以便多个请求之间可以共享这个属性
+  (4)ModelAttribute:方法入参标注该注解后，入参的对象就会放到数据模型中
