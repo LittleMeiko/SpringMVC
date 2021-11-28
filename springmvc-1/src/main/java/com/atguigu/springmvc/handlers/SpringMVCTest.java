@@ -6,12 +6,14 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CookieValue;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -71,12 +73,58 @@ import com.atguigu.springmvc.entities.User;
  * 处理模型数据输出的方式三：将模型中的某个属性暂存到HttpSession中，以便多个请求之间可以共享这个属性
  * 此注解只能放在类的上面，而不能放到方法的上面
  */
-@SessionAttributes(value = {"user"}, types = {Address.class})
+//@SessionAttributes(value = {"user"}, types = {Address.class})
 @RequestMapping("/springmvc")
 @Controller
 public class SpringMVCTest {
 	
 	private static final String SUCCESS = "success";
+	
+	/**
+	 * 处理模型数据输出的方式四：有@ModelAttribute注解标记的方法，会在每个目标方法执行之前被SprimgMVC调用
+	 */
+	@ModelAttribute
+	public void getUser(@RequestParam(value = "id", required = false) Integer id,
+			Map<String, Object> map) {
+		System.out.println("ModelAttribute Method...");
+		if (Objects.nonNull(id)) {
+			//模拟从数据库中获取对象
+			User user = new User(1, "Tom", "123456", "tom@atguigu.com", 13);
+			System.out.println("从数据库中获取一个对象：" + user);
+			
+			map.put("user", user);
+		}
+	}
+	
+	/**
+	 * 运行流程：
+	 * 1.执行@ModelAttribute注解标记的方法：从数据库中取出对象，并将其放入map中(键为user)
+	 * 2.SpringMVC从Map中取出User对象，并把表单的请求参数赋值给该User对象的对应属性
+	 * 3.SpringMVC把上述对象传入目标方法的入参
+	 * 
+	 * 源码分析过程：
+	 * 1.首先调用@ModelAttribute注解修饰的方法，实际上把@ModelAttribute方法中Map中的数据放在了implictModel中
+	 * 2.解析请求处理器的目标参数，实际该目标参数来自于WebDataBinder对象的target属性
+	 *   (1)创建WebDataBinder对象：
+	 *     1)确定objectName属性：若传入的attrName为"",则objectName为目标方法入参的类名第一个字母小写对应的字符串
+	 *       注意：若目标方法的POJO属性使用了@ModelAttribute注解来修饰，则attrName的值即为@ModelAttribute注解的value属性值
+	 *     2)确定target属性： 
+	 *       > 在implictModel中查找attrName对应的属性值，若存在，ok
+	 *       > 若不存在:
+	 *       	> 则验证当前Handler是否使用了@SessionAttributes注解修饰，若使用了则尝试从session中获取attrName对应的属性值
+	 *            若session中没有对应的属性值则抛出异常
+	 *          > 若Handler没有使用@SessionAttributes注解修饰，或者@SessionAttributes中没有使用value值指定的key和attrName
+	 *            相匹配，则通过反射创建POJO对象
+	 *   (2)SpringMVC把表单的请求参数赋值给WebDataBinder对象的target对应的属性
+	 * 3.SpringMVC会把WebDataBinder的attrName和target给到implictModel,进而传到request域对象中
+	 * 4.把WebDataBinder的target属性作为参数传递给目标方法的入参
+	 *			 
+	 */
+	@RequestMapping(value = "/testModelAttribute")
+	public String testModelAttribute(@ModelAttribute(value = "user")User user) {
+		System.out.println("修改：" + user);
+		return SUCCESS;
+	}
 	
 	@RequestMapping(value = "/testSessionAttributes")
 	public String testSessionAttributes (Map<String, Object> map) {

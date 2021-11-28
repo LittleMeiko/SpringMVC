@@ -18,4 +18,4 @@
   (1)ModelAndView:处理方法返回值类型为ModelAndView时，方法体即可通过该对象添加模型数据
   (2)Map及Model:入参为Model、ModelMap、java.util.Map时，处理方法返回时会自动将Map中的数据添加到模型中
   (3)SessionAttributes:将模型中的某个属性暂存到HttpSession中，以便多个请求之间可以共享这个属性
-  (4)ModelAttribute:方法入参标注该注解后，入参的对象就会放到数据模型中
+  (4)ModelAttribute:方法入参标注该注解后，入参的对象就会放到数据模型中，有@ModelAttribute注解标记的方法，会在每个目标方法执行之前被SprimgMVC调用
