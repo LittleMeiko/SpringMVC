@@ -81,6 +81,20 @@ public class SpringMVCTest {
 	private static final String SUCCESS = "success";
 	
 	/**
+	 * 视图解析器的作用：将 逻辑视图 转换为 物理视图
+	 * 工作过程：
+	 * 	1.无论目标方法返回什么类型的返回值(String、View、ModelAndView、ModelMap等)，SpringMVC都会将其封装成一个ModelAndView
+	 *  2.视图解析器从ModelAndView解析出View
+	 *  3.最终调用View的render方法渲染出具体的视图
+	 * 
+	 */
+	@RequestMapping(value = "/testResourceViewReslover")
+	public String testResourceViewReslover() {
+		System.out.println("testResourceViewReslover");
+		return SUCCESS;
+	}
+	
+	/**
 	 * 处理模型数据输出的方式四：有@ModelAttribute注解标记的方法，会在每个目标方法执行之前被SprimgMVC调用
 	 */
 	@ModelAttribute

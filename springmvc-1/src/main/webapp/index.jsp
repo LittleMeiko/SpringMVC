@@ -7,7 +7,10 @@
 <title>Insert title here</title>
 </head>
 <body>
-
+	
+	<a href="springmvc/testResourceViewReslover">Test ResourceViewReslover</a>
+	<br></br>
+	
 	<form action="springmvc/testModelAttribute" method="post">
 		<input type="hidden" name="id" value="1" />
 		<br>
