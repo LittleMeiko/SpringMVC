@@ -80,6 +80,18 @@ public class SpringMVCTest {
 	
 	private static final String SUCCESS = "success";
 	
+	@RequestMapping(value = "/tesetRedirect")
+	public String tesetRedirect() {
+		System.out.println("tesetRedirect");
+		return "redirect:/index.jsp";
+	}
+	
+	@RequestMapping("/testView")
+	public String testView() {
+		System.out.println("testView...");
+		return "helloView";
+	} 
+	
 	/**
 	 * 视图解析器的作用：将 逻辑视图 转换为 物理视图
 	 * 工作过程：
