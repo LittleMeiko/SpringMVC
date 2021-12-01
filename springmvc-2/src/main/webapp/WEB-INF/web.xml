@@ -21,6 +21,7 @@
 	</servlet-mapping>
 	
 	<!-- 配置org.springframework.web.filter.HiddenHttpMethodFilter可将POST请求转化为PUT、DELETE请求-->
+	<!-- 使用springmvc的HiddenHttpMethodFilter不生效,代码没有问题的前提是，应该是tomcat的版本高于8，使用低于8的 -->
   	<filter>
   		<filter-name>HiddenHttpMethodFilter</filter-name>
   		<filter-class>org.springframework.web.filter.HiddenHttpMethodFilter</filter-class>

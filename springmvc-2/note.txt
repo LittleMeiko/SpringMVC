@@ -1,0 +1,29 @@
+SpringMVC数据绑定流程：
+ 1.SpringMVC框架将ServletRequest对象及目标方法的入参实例传递给WebDataBinderFactory实例，以创建DataBinder实例对象。
+ 2.DataBinder调用装配在SpringMVC上下文中的ConversionService组件进行数据类型转换及数据格式化。将Servlet中的请求信息填充到入参对象中。
+ 3.调用Validator组件对已经绑定了请求消息的入参对象进行数据合法性校验，最终生成数据绑定结果BindingResult对象。
+ 4.SpringMVC抽取BindingResult中的入参对象和校验错误对象，将它们赋给处理方法的相应入参。
+ 
+关于<mvc:annotation-driven />标签：
+ 1.会自动注册RequestMappingHandlerMapping、RequestMappingHandlerAdapter、ExceptionHandlerExceptionReslover三个bean
+ 2.还将提供以下支持：
+   支持使用ConversionService实例对表单参数进行类型转换
+   支持使用@NumberFormat、@DateTimeFormat注解完成数据类型的格式化
+   支持使用@Valid注解对JavaBean实例进行JSR-303验证
+   支持使用@RequestBody和@ResponseBody注解
+   
+数据格式化：
+ 对对象属性的输入\输出进行格式化，从本质上讲依然属于"类型转换"的范畴：
+  Spring在格式化模块中定义了一个实现ConversionService接口的FormattingConversionService实现类，
+  且该实现类继承了GenericConversionService，因此它既具有"类型转换"的功能，又具有"格式化"的功能
+  
+  FormattingConversionService拥有一个FormattingConversionServiceFactoryBean工厂类用于
+  用于在Spring上下文中构造FormattingConversionService
+  
+  FormattingConversionServiceFactoryBean内部已经注册了：
+  	NumberFormatAnnotationFormatterFactory:支持对数字类型的属性使用@NumberFormat
+  	JodaDateTimeFormatAnnotationFormatterFactory:支持对日期类型的属性使用@DateTimeFormat
+  	
+  装配了FormattingConversionServiceFactoryBean后，就可以在SpringMVC入参绑定及模型数据输出时使用注解驱动了。
+  <mvc:annotation-driven />默认创建的实例即为FormattingConversionServiceFactoryBean
+  
