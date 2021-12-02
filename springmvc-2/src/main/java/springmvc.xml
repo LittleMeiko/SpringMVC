@@ -36,4 +36,30 @@
 			</set>
 		</property>
 	</bean>
+	
+	<!-- 配置国际化资源文件 -->
+	<bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
+		<property name="basename" value="i18n"></property>
+	</bean>
+	
+	<!-- 国际化页面配置（通过超链接选择语言那种)
+	配置SessionLocaleResolver用于将Locale对象存储于Session中供后续使用(这里的Id只能用这个：localeResolver，否则会出问题)   第一步： -->
+	<bean id="localeResolver" class="org.springframework.web.servlet.i18n.SessionLocaleResolver"></bean>
+	
+	<!-- 配置国际化页面拦截器（通过超链接选择语言那种）配置LocaleChangeInterceptor 
+		主要用于获取请求中的locale信息，将其转为Locale对像，获取LocaleResolver对象    第二步： -->
+	<mvc:interceptors>
+		<bean id="localeChangeInterceptor" class="org.springframework.web.servlet.i18n.LocaleChangeInterceptor"></bean>
+	</mvc:interceptors>
+	
+	<!-- 
+		<mvc:view-controller path="/i18n" view-name="i18n"/>
+	 -->
+	<mvc:view-controller path="/i18n2" view-name="i18n2"/>
+	
+	<!-- 配置MultipartResolver实现文件上传 -->
+	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<property name="defaultEncoding" value="UTF-8"></property>
+		<property name="maxUploadSize" value="1024"></property>
+	</bean>
 </beans>

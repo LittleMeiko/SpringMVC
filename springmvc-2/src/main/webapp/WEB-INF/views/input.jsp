@@ -27,8 +27,13 @@
 		则会报错
 	 -->
 	<form:form action="${pageContext.request.contextPath}/emp" method="POST" modelAttribute="employee" > 
+		<!-- 显示所有的错误消息 -->
+		<form:errors path="*"/>
+		<br>
+		
 		<c:if test="${employee.id == null}">
 			LastName:<form:input path="lastName" />	
+			<form:errors path="lastName"/>
 		</c:if>
 		
 		<c:if test="${employee.id != null}">
@@ -38,6 +43,7 @@
 		
 		<br>
 		Email:<form:input path="email" />
+		<form:errors path="email"/>
 		<br>
 		<% 
 			Map<String, String> genders = new HashMap();
@@ -50,6 +56,7 @@
 		Department:<form:select path="department.id" items="${departments}" itemLabel="departmentName" itemValue="id" />
 		<br>
 		Birth:<form:input path="birth"/>
+		<form:errors path="birth"/>
 		<br>
 		Salary:<form:input path="salary"/>
 		<br>

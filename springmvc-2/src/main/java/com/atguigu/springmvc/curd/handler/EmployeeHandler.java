@@ -4,6 +4,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -37,7 +39,6 @@ public class EmployeeHandler {
 		webDataBinder.setDisallowedFields("lastName");
 	} 
 	
-	@ModelAttribute
 	@RequestMapping(value = "/emp/{id}", method = RequestMethod.GET)
 	public String input(@PathVariable("id")Integer id, Map<String, Object> map) {
 		map.put("employee", employeeDao.get(id));
@@ -52,13 +53,17 @@ public class EmployeeHandler {
 	}
 	
 	@RequestMapping(value = "/emp", method = RequestMethod.POST)
-	public String save(Employee employee, BindingResult result) {
+	public String save(@Valid Employee employee, BindingResult result, Map<String, Object> map) {
 		if (result.getErrorCount() > 0) {
 			System.out.println("出错了。。。");
 			List<FieldError> fieldErrors = result.getFieldErrors();
 			for(FieldError fieldError : fieldErrors) {
 				System.out.println(fieldError.getField() + ":" + fieldError.getDefaultMessage());
 			}
+			
+			//若验证出错，则前往定制页面
+			map.put("departments", departmentDao.getDepartments());
+			return "input";
 		}
 		System.out.println("save:" + employee);
 		employeeDao.save(employee);

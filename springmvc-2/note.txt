@@ -6,11 +6,21 @@ SpringMVC数据绑定流程：
  
 关于<mvc:annotation-driven />标签：
  1.会自动注册RequestMappingHandlerMapping、RequestMappingHandlerAdapter、ExceptionHandlerExceptionReslover三个bean
+   RequestMappingHandlerAdapter默认(6个)装配如下HttpMessageConverter:(根据请求头或响应头Accept属性选择匹配的HttpMessageConverter)
+     ByteArrayHttpMessageConverter
+     StringHttpMessageConverter
+     SourceHttpMessageConverter
+     ResourceHttpMessageConverter
+     ...
+    
  2.还将提供以下支持：
    支持使用ConversionService实例对表单参数进行类型转换
    支持使用@NumberFormat、@DateTimeFormat注解完成数据类型的格式化
    支持使用@Valid注解对JavaBean实例进行JSR-303验证
    支持使用@RequestBody和@ResponseBody注解
+ 3.默认装配好的bean：
+   FormattingConversionServiceFactoryBean：数据类型转换及格式化
+   LocalValidatorFactoryBean：数据验证
    
 数据格式化：
  对对象属性的输入\输出进行格式化，从本质上讲依然属于"类型转换"的范畴：
@@ -26,4 +36,79 @@ SpringMVC数据绑定流程：
   	
   装配了FormattingConversionServiceFactoryBean后，就可以在SpringMVC入参绑定及模型数据输出时使用注解驱动了。
   <mvc:annotation-driven />默认创建的实例即为FormattingConversionServiceFactoryBean
+  
+  
+SpringMVC入参数据校验：
+  1.使用JSR303标准
+  2.加入Hibernate Validator验证框架的jar包
+  3.在springmvc配置文件中添加<mvc:annotation-driven />标签
+  4.在需要验证的bean的属性上添加对应注解：@NotEmpty @Past @Email等等
+  5.在目标方法bean类型的前面添加@Valid注解
+  	注意：需要校验的Bean对象和其绑定结果对象或者错误对象是成对出现的，他们之间不允许声明其它的入参
+  	
+目标方法如何返回Json数据？
+  1.添加三个jar包：jackson-annotations.jar,jackson-core.jar,jackson-databind.jar
+  2.处理目标方法使其返回json对应的对象或集合
+  3.添加@ResponseBody注解
+  *原理：Interface HttpMessageConverter<T>
+  	   1.Spring3.0新增的一个接口，负责将请求消息转换为一个对象，将对象输出为响应信息
+  	   2.定义的方法：
+  	   	 -- Boolean canRead(Class<?> clazz, MediaType mediaType):指定转换器可以读取的对象类型
+  	   	 即转换器是否可以将请求消息转换为clazz类型的对象，同时支持MIME对象(text/html,application/json)
+  	   	 -- Boolean canWrite()
+  	   	 -- T read()
+  	   	 -- void write()
+  	   3.工作原理：
+  	     请求报文 -> HttpInputMesssage -> HttpMessageConverter --(Java对象)-->SpringMVC
+  	     SpringMVC --(Java对象) -> HttpMessageConverter -> HttpOutputMesssage -> 响应报文
+  	   4.使用：
+  	     @RequestBody @ResponseBody
+  	     @HttpEntity @ResponseEntity     	 
+
+SpringMVC的国际化：
+  1.要求：
+    1)在页面上能够根据浏览器语言的设置情况对文本(不是内容)、时间、数值等进行本地化处理
+    2)可以在bean中获取国际化资源文件Locale对应的消息
+    3)可以通过超链接切换Locale，而不再依赖浏览器语言的设置情况
+  2.解决：
+    1)使用JSTL的fmt标签
+    2)在bean中注入ResourceBundleMessageResource实例，使用其对应的getMessage()方法即可
+    3)配置LocalResolver和LocalChangeInterceptor
+      LocalChangeInterceptor工作原理：
+       (1)获取name=locale的请求参数
+       (2)把第一步的locale请求参数解析为Locale对象
+       (3)获取LocalResolver对象
+       =====以上由LocalChangeInterceptor完成=====
+       (4)把Locale对象设置为session属性    
+       (5)从session中获取Locale对象
+       =====以上由LocalResolver完成=====
+       (6)使用Locale
+       
+       
+文件上传：通过Interface MultipartResolver实现
+   SpringMVC用Apache-JaKarta项目组-CommonsFileUpload技术实现了一个MultipartResolver实现类：CommonsMultipartResolver
+   SpringMVC上下文中默认没有装配MultipartResolver，如果想用Spring实现文件上传功能,需要在上下文中配置MultipartResolver
+  	 
+  	 
+  	 
+  	 
+  	 
+  	 
+  	 
+  	 
+  	 
+  	 
+  	 
+  	 
+  	 
+  	 
+  	 
+  	 
+  	 
+  	 
+  	 
+  	 
+  	 
+  	 
+  	
   
