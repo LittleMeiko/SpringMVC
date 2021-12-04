@@ -54,5 +54,19 @@
 	<br><br>
 	
 	<a href="i18n">I18N PAGE</a>
+	
+	<br><br>
+	
+	<a href="testExceptionHandlerExceptionReslover?i=10">Test ExceptionHandlerExceptionReslover</a>
+	<br><br>
+	
+	<a href="testResponseStatusExceptionHandler?i=10">Test ResponseStatusExceptionHandler</a>
+	<br><br>
+	
+	<a href="testDefaultHandlerExceptionResolver">Test DefaultHandlerExceptionResolver</a>
+	<br><br>
+	
+	<a href="testSimpleMappingExceptionResolver?i=2">TestSimpleMappingExceptionResolver</a>
+	<br><br>
 </body>
 </html>

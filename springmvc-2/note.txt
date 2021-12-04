@@ -90,6 +90,12 @@ SpringMVC的国际化：
    SpringMVC上下文中默认没有装配MultipartResolver，如果想用Spring实现文件上传功能,需要在上下文中配置MultipartResolver
   	 
   	 
+SpringMVC与Struts2的对比：
+  1.SpringMVC的入口是Servlet，而Struts2的入口是Filter
+  2.SpringMVC运行速度会比Struts2稍快点。SpringMVC是基于方法而设计(多个Handler可以放在同一个类中)，而Struts2是基于类(每发一次请求就会创建一个新的Action)。
+  3.SpringMVC使用更加简洁，SpringMVC的开发效率也比Struts2要高;SpringMVC支持JSR303，处理Ajax的请求更方便。
+  4.Struts2的OGNL表达式使页面的开发效率要比SpringMVC要高。
+  	 
   	 
   	 
   	 

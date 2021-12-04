@@ -7,6 +7,8 @@
 <title>Insert title here</title>
 </head>
 <body>
-	<h4>文件上传成功!</h4>
+	<h4>
+		<font color="green">Success Page</font>
+	</h4>
 </body>
 </html>
